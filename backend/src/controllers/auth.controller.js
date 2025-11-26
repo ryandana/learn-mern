@@ -5,11 +5,14 @@ import jwt from "jsonwebtoken"
 export const registerController = async (req, res) => {
     try {
         const { username, email, password } = req.body;
+        // Check if user already exists`
         const exist = await User.findOne({ email });
         if (exist) {
             return res.status(400).json({ message: "User already exists" });
         }
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 12);
+        // Create the user
         const user = await User.create({ username, nickname: username, email, password: hashedPassword });
         res.status(201).json({ user });
     } catch (error) {
